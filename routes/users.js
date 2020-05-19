@@ -18,15 +18,9 @@ module.exports = (app) => { //função q já recebe o app pelo consign
     
     });//fechando rota users
     
-    app.get('/users/admin', (req,res) => { //criando rota para users/admin
+    app.post('/users', (req,res) => { //criando rota para users/admin
     
-        res.statusCode = 200; //resposta de conexão efetivada
-        res.setHeader('Content-Type', 'application/json'); //para responder com um json
-        res.json({
-    
-            users:[{}]
-    
-        });
+        res.json(req.body);
     
     }); //fechando rota admin
 
