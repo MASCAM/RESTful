@@ -13,5 +13,7 @@ nodemon index
 E testar o funcionamento do servidor no google chrome pelos endereços:
 
 http://localhost:3000/
+
 http://localhost:3000/users
+
 http://localhost:3000/users/admin
