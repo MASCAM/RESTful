@@ -1,3 +1,11 @@
+let NeDB = require('nedb');
+let db = new NeDB({
+
+    filename: 'users.db',
+    autoload: true,
+
+})
+
 module.exports = (app) => { //função q já recebe o app pelo consign
 
     app.get('/users', (req,res) => { //criando rota para users
@@ -20,7 +28,24 @@ module.exports = (app) => { //função q já recebe o app pelo consign
     
     app.post('/users', (req,res) => { //criando rota para users/admin
     
-        res.json(req.body); //para exibir uma resposta em formato json
+        db.insert(req.body, (err, user) => { //para inserir os dados enviados via POST no db
+
+            if (err) {
+
+                console.log(`error: ${err}`);
+                res.status(400).json({ //código para erro
+
+                    error: err,
+
+                });
+
+            } else {
+
+                res.status(200).json(user); //código para sucesso e retorna o json com os dados do usuário
+
+            }
+
+        });
     
     }); //fechando rota admin
 
