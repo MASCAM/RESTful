@@ -1,8 +1,11 @@
 //nodemon index para iniciar o server
 const express = require('express'); //carregando o módulo http
 const consign = require('consign');
+const bodyParser = require('body-parser');
 
 let app = express(); //chamando o módulo express pro aplicativo
+app.use(bodyParser.urlencoded({extended: false})); //para poder carregar url codificada?
+app.use(bodyParser.json()); //carregando o método json do bodyParser pra aplicação
 consign().include('routes').into(app); //incluir todos os arquivos de routes pro aplicativo
 
 /*let routesIndex = require('./routes/index'); //carregando as rotas dos arquivos nas variáveis

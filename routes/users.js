@@ -20,7 +20,7 @@ module.exports = (app) => { //função q já recebe o app pelo consign
     
     app.post('/users', (req,res) => { //criando rota para users/admin
     
-        res.json(req.body);
+        res.json(req.body); //para exibir uma resposta em formato json
     
     }); //fechando rota admin
 
