@@ -8,36 +8,38 @@ let db = new NeDB({
 
 module.exports = (app) => { //função q já recebe o app pelo consign
 
-    app.get('/users', (req,res) => { //criando rota para users
+    let route = app.route('/users');
+    route.get((req,res) => { //criando rota para users
 
-        res.statusCode = 200; //resposta de conexão efetivada
-        res.setHeader('Content-Type', 'application/json');
-        res.json({
+        db.find({}).sort({name: 1}).exec((err, users) => { //acha os objetos em db e os lista pelo nome na ordem crescente(1 para crescente e -1 para decrescente)
+
+            if (err){
+
+                app.utils.error.send(err, req, res); //para enviar notificação de erro
+
+            } else {
+
+                res.statusCode = 200; //resposta de conexão efetivada
+                res.setHeader('Content-Type', 'application/json');
+                res.json({
     
-            users:[{
+                    users,
     
-                name: 'Hcode',
-                email: 'contato@hcode.com.br',
-                id: 1,
-    
-            }]
-    
-        });
+                });
+
+            }
+
+        }); 
     
     });//fechando rota users
     
-    app.post('/users', (req,res) => { //criando rota para users/admin
+    route.post((req,res) => { //criando rota postar usuários no db
     
         db.insert(req.body, (err, user) => { //para inserir os dados enviados via POST no db
 
             if (err) {
 
-                console.log(`error: ${err}`);
-                res.status(400).json({ //código para erro
-
-                    error: err,
-
-                });
+                app.utils.error.send(err, req, res); //para enviar notificação de erro
 
             } else {
 
@@ -47,6 +49,62 @@ module.exports = (app) => { //função q já recebe o app pelo consign
 
         });
     
-    }); //fechando rota admin
+    }); //fechando rota post
 
-}
+    let routeId = app.route('/users/:id');
+
+    routeId.get((req,res) => { //rota para procurar um usuário com ID específico
+
+        db.findOne({_id:req.params.id}).exec((err, user) => { //manda solicitação para achar um usuário com o ID especificado
+
+            if (err) {
+
+                app.utils.error.send(err, req, res); //para enviar notificação de erro
+
+            } else {
+
+                res.status(200).json(user); //código para sucesso e retorna o json com os dados do usuário
+
+            }
+
+        });
+
+    }); //fechando rota para procurar usuário por ID
+
+    routeId.put((req,res) => { //rota com método para alterar os dados de um usuário específico
+
+        db.update({_id:req.params.id}, req.body, err => { //manda solicitação para alterar os dados do usuário com o ID especificado
+
+            if (err) {
+
+                app.utils.error.send(err, req, res); //para enviar notificação de erro
+
+            } else {
+
+                res.status(200).json(Object.assign(req.params, req.body)); //código para sucesso e retorna o json com os dados do usuário
+
+            }
+
+        });
+
+    }); //fechando rota para atualizar os dados do usuário
+
+    routeId.delete((req,res) => { //rota com método para deletar um usuário pelo ID
+
+        db.remove({_id:req.params.id}, {}, err => {
+
+            if (err) {
+
+                app.utils.error.send(err, req, res); //para enviar notificação de erro
+
+            } else {
+
+                res.status(200).json(req.params); //código para sucesso e retorna o json com os dados do usuário
+
+            }
+
+        });
+
+    }); //fechando routeID.delete
+
+} //fechando módulo
