@@ -35,6 +35,11 @@ module.exports = (app) => { //função q já recebe o app pelo consign
     
     route.post((req,res) => { //criando rota postar usuários no db
     
+        if (!app.utils.validator.user(app, req, res)) { //se tiver algum erro na validação do objeto enviado
+            //retorna falso
+            return false;
+
+        }
         db.insert(req.body, (err, user) => { //para inserir os dados enviados via POST no db
 
             if (err) {
@@ -73,6 +78,11 @@ module.exports = (app) => { //função q já recebe o app pelo consign
 
     routeId.put((req,res) => { //rota com método para alterar os dados de um usuário específico
 
+        if (!app.utils.validator.user(app, req, res)) { //se tiver algum erro na validação do objeto enviado
+            //retorna falso
+            return false;
+
+        }
         db.update({_id:req.params.id}, req.body, err => { //manda solicitação para alterar os dados do usuário com o ID especificado
 
             if (err) {
