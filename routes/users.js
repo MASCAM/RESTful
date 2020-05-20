@@ -1,3 +1,5 @@
+const { check, validationResult } = require('express-validator'); 
+
 let NeDB = require('nedb');
 let db = new NeDB({
 
@@ -33,13 +35,19 @@ module.exports = (app) => { //função q já recebe o app pelo consign
     
     });//fechando rota users
     
-    route.post((req,res) => { //criando rota postar usuários no db
-    
-        if (!app.utils.validator.user(app, req, res)) { //se tiver algum erro na validação do objeto enviado
-            //retorna falso
-            return false;
+    route.post([
 
-        }
+        check('name').not().isEmpty().withMessage('O nome é obrigatório.'), //para impedir que esses dados estejam em branco
+        check('email').isEmail().withMessage('O e-mail está inválido.'),
+
+    ], (req,res) => { //criando rota postar usuários no db
+        
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+           
+            return res.status(422).json({ errors: errors.array() });
+          
+        } 
         db.insert(req.body, (err, user) => { //para inserir os dados enviados via POST no db
 
             if (err) {
@@ -76,12 +84,18 @@ module.exports = (app) => { //função q já recebe o app pelo consign
 
     }); //fechando rota para procurar usuário por ID
 
-    routeId.put((req,res) => { //rota com método para alterar os dados de um usuário específico
+    routeId.put([
 
-        if (!app.utils.validator.user(app, req, res)) { //se tiver algum erro na validação do objeto enviado
-            //retorna falso
-            return false;
+        check('name').not().isEmpty().withMessage('O nome é obrigatório.'), //para impedir que esses dados estejam em branco
+        check('email').isEmail().withMessage('O e-mail está inválido.'),
 
+    ], (req,res) => { //rota com método para alterar os dados de um usuário específico
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+           
+            return res.status(422).json({ errors: errors.array() });
+          
         }
         db.update({_id:req.params.id}, req.body, err => { //manda solicitação para alterar os dados do usuário com o ID especificado
 

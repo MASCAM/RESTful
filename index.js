@@ -2,11 +2,12 @@
 const express = require('express'); //carregando o módulo http
 const consign = require('consign');
 const bodyParser = require('body-parser'); //carregando todos os pacotes do package.json
-const { check, validationResult } = require('express-validator'); 
+
 
 let app = express(); //chamando o módulo express pro aplicativo
 app.use(bodyParser.urlencoded({extended: false})); //para poder carregar url codificada?
 app.use(bodyParser.json()); //carregando o método json do bodyParser pra aplicação
+
 
 consign().include('routes').include('utils').into(app); //incluir todos os arquivos de routes pro aplicativo
 
